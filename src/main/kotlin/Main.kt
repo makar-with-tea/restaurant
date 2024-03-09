@@ -82,11 +82,24 @@ class AdminFuncs {
                 RestaurantDaoImpl.getInstance().getMenu())
         return RestaurantDaoImpl.getInstance().admin.deleteDish(dishId)
     }
-    fun setNumber(dishId : Int, number : Int) : Boolean {
-
+    fun setNumber() : Boolean {
+        val dishId = readInt("Введите число - номер блюда в меню.\nМЕНЮ:\n" +
+                RestaurantDaoImpl.getInstance().getMenu())
+        val number = readInt("Введите число - обновленное количество единиц блюда в ресторане.")
+        return RestaurantDaoImpl.getInstance().admin.setNumber(dishId, number)
     }
-    fun setPrice(dishId : Int, price : Int) : Boolean;
-    fun setCookingTime(dishId : Int, time : Long) : Boolean;
+    fun setPrice() : Boolean {
+        val dishId = readInt("Введите число - номер блюда в меню.\nМЕНЮ:\n" +
+                RestaurantDaoImpl.getInstance().getMenu())
+        val price = readInt("Введите число - обновленную цену блюда в рублях.")
+        return RestaurantDaoImpl.getInstance().admin.setPrice(dishId, price)
+    }
+    fun setCookingTime() : Boolean {
+        val dishId = readInt("Введите число - номер блюда в меню.\nМЕНЮ:\n" +
+                RestaurantDaoImpl.getInstance().getMenu())
+        val cookingTime = readLong("Введите число - обновленное время приготовления блюда в миллисекундах.")
+        return RestaurantDaoImpl.getInstance().admin.setCookingTime(dishId, cookingTime)
+    }
 }
 
 suspend fun main() {
