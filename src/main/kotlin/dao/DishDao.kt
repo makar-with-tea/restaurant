@@ -1,37 +1,48 @@
-package org.example.dao
+package dao
+
+import entity.DishEntity
+import kotlin.time.Duration
 
 interface DishDao {
-    fun setNumber(number : Int) : Boolean;
-    fun setPrice(price : Int) : Boolean;
-    fun setCookingTime(time : Int) : Boolean;
-    fun getNumber() : Int;
-    fun getPrice() : Int;
-    fun getCookingTime() : Int;
+    fun setNumber(dish : DishEntity, number : Int);
+    fun setPrice(dish : DishEntity, price : Int);
+    fun setCookingTime(dish : DishEntity, time : Long);
+    fun getNumber(dish : DishEntity) : Int;
+    fun getPrice(dish : DishEntity) : Int;
+    fun getCookingTime(dish : DishEntity) : Long;
 }
 
 class DishDaoImpl : DishDao {
-    override fun setNumber(number: Int): Boolean {
-        TODO("Not yet implemented")
+    override fun setNumber(dish: DishEntity, number: Int) {
+        dish.number = number
     }
 
-    override fun setPrice(price: Int): Boolean {
-        TODO("Not yet implemented")
+    override fun setPrice(dish: DishEntity, price: Int) {
+        dish.price = price
     }
 
-    override fun setCookingTime(time: Int): Boolean {
-        TODO("Not yet implemented")
+    override fun setCookingTime(dish: DishEntity, time: Long) {
+        dish.cookingTime = time
     }
 
-    override fun getNumber(): Int {
-        TODO("Not yet implemented")
+    override fun getNumber(dish: DishEntity): Int {
+        return dish.number
     }
 
-    override fun getPrice(): Int {
-        TODO("Not yet implemented")
+    override fun getPrice(dish: DishEntity): Int {
+        return dish.price
     }
 
-    override fun getCookingTime(): Int {
-        TODO("Not yet implemented")
+    override fun getCookingTime(dish: DishEntity): Long {
+        return dish.cookingTime
+    }
+
+    fun cookPortion(dish: DishEntity) : Boolean {
+        if (dish.number > 0) {
+            --dish.number
+            return true
+        }
+        return false
     }
 
 }
