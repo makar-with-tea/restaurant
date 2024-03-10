@@ -42,6 +42,7 @@ class KitchenDaoImpl : KitchenDao {
                 delay(dish.cookingTime)
             } while (ind < order.dishIds.size)
             order.status = OrderStatus.READY
+            serializer.writeOrder(order)
         } catch (e: Exception) {
             println(e.message)
         }

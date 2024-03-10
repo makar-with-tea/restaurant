@@ -1,7 +1,7 @@
 package dao
 
 import entity.OrderEntity
-import entity.ReviewEntity
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -13,12 +13,11 @@ import service.enums.OrderStatus
 interface VisitorDao {
     fun startOrder(dishIds : ArrayList<Int> = arrayListOf()) : Int;
     fun addDishToOrder(dishId : Int, orderId : Int) : Boolean;
-    suspend fun finishOrder(orderId : Int);
+    fun finishOrder(orderId : Int);
     fun cancelOrder(orderId : Int) : Boolean;
     fun getStatus(orderId : Int) : OrderStatus;
     fun payForOrder(orderId : Int) : Boolean;
-    fun leaveReviewForOrder(orderId : Int) : Boolean;
-    fun leaveReviewForDish(dishId : Int, mark : Int, comment : String) : Boolean;
+    fun leaveReview(dishId : Int, mark : Int, comment : String);
     fun getOrders() : ArrayList<Int>;
 }
 
@@ -52,10 +51,10 @@ class VisitorDaoImpl(private val validator: Validator = Validator()) : VisitorDa
         }
     }
 
-    override suspend fun finishOrder(orderId: Int) {
+    override fun finishOrder(orderId: Int) {
         try {
             if (!validator.validateUserForOrder(orderId)) return
-            RestaurantDaoImpl.getInstance().kitchen.makeOrder(orderId)
+            GlobalScope.launch { RestaurantDaoImpl.getInstance().kitchen.makeOrder(orderId) }
         } catch (e: Exception) {
             println(e.message)
         }
@@ -102,22 +101,8 @@ class VisitorDaoImpl(private val validator: Validator = Validator()) : VisitorDa
         }
     }
 
-    override fun leaveReviewForOrder(orderId: Int): Boolean {
-        try {
-            val order = serializer.readOrder(orderId)
-            for (e in )
-        } catch (e : FileFailureException) {
-            return false
-        }
-    }
+    override fun leaveReview(dishId : Int, mark : Int, comment : String) {
 
-    override fun leaveReviewForDish(dishId : Int, mark : Int, comment : String) : Boolean {
-        try {
-            serializer.updateReviews(ReviewEntity(dishId, mark, comment))
-            return true
-        } catch (e : FileFailureException) {
-            return false
-        }
     }
 
     override fun getOrders(): ArrayList<Int> {
