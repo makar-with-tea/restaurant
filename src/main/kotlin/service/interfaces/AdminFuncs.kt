@@ -1,11 +1,12 @@
 package service.interfaces
 
 import dao.RestaurantDaoImpl
+import kotlinx.coroutines.runBlocking
 import org.example.*
 import service.Validator
 
 class AdminFuncs(private val validator : Validator = Validator()) {
-    suspend fun adminMain() {
+    fun adminMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |0 - посмотреть меню
             |1 - добавить блюдо в меню

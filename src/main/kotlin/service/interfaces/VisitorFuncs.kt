@@ -10,7 +10,7 @@ import service.Serializer
 import service.enums.OrderStatus
 
 class VisitorFuncs(private val validator : Validator = Validator()) {
-    suspend fun visitorMain() {
+    fun visitorMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |0 - посмотреть меню
             |1 - начать оформление заказа
@@ -27,27 +27,19 @@ class VisitorFuncs(private val validator : Validator = Validator()) {
         var command: Int
         while (true) {
             do command = readInt(adminMes) while (command > 10)
-            runBlocking {
-                when (command) {
-                    0 -> printMenu()
-                    1 -> startOrder()
-                    2 -> addDishToOrder()
-                    3 -> launch { finishOrder()}
-                    4 -> cancelOrder()
-                    5 -> getStatus()
-                    6 -> payForOrder()
-                    7 -> {
-                        startWork()
-                        return@runBlocking
-                    }
-                    8 -> {
-                        deleteAcc()
-                        return@runBlocking
-                    }
-                    9 -> getOrders()
-                    10 -> finish()
-                    //leaveReview - только после оплаты
-                }
+            when (command) {
+                0 -> printMenu()
+                1 -> startOrder()
+                2 -> addDishToOrder()
+                3 -> finishOrder()
+                4 -> cancelOrder()
+                5 -> getStatus()
+                6 -> payForOrder()
+                7 -> return startWork()
+                8 -> return deleteAcc()
+                9 -> getOrders()
+                10 -> finish()
+                //leaveReview - только после оплаты
             }
         }
     }
@@ -83,7 +75,7 @@ class VisitorFuncs(private val validator : Validator = Validator()) {
             } else println("Ошибка при добавлении блюда!")
         } else println("Блюда с таким id не существует!")
     }
-    private suspend fun finishOrder() {
+    private fun finishOrder() {
         val mes = "Введите id вашего заказа:"
         val orderId = readInt(mes)
         if (!validator.validateOrderId(orderId)) return println("Заказа с таким id не существует!")

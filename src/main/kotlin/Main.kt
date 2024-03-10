@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
 
 val validator = Validator()
 val serializer = Serializer()
-suspend fun startWork() {
+fun startWork() {
     val adminHandler = AdminFuncs()
     val visitorHandler = VisitorFuncs()
     val regMes = """Здравствуйте! Чтобы начать работу с приложением, зарегистрируйтесь или войдите в аккаунт.
@@ -76,7 +76,7 @@ fun logInUser() : Boolean {
     return RestaurantDaoImpl.getInstance().logInUser(login, password)
 }
 
-suspend fun deleteAcc() {
+fun deleteAcc() {
     val confirm = "Вы точно хотите удалить аккаунт? 1 - да, 2 - нет"
     var command : Int
     do command = readInt(confirm) while (command > 2 || command == 0)
@@ -121,20 +121,6 @@ suspend fun exec(i: Int) {
     delay(100)
     println("end$i")
 }
-suspend fun main() {
-    /*runBlocking {
-        for (i in 1..10) {
-            launch {exec(i)}
-        }
-    }
-    var command : Int
-    while (true) {
-        do command = readInt("aaa") while (command > 9)
-        when (command) {
-            0 -> printMenu()
-            1 -> f()
-            2 -> finish()
-        }
-    }*/
+fun main() {
     startWork()
 }
