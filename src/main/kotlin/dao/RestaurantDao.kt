@@ -1,6 +1,5 @@
 package dao
 
-import entity.OrderEntity
 import entity.UserEntity
 import service.enums.Role
 import service.Serializer
@@ -16,7 +15,7 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
     val visitor : VisitorDaoImpl = VisitorDaoImpl()
     var currentUser : UserEntity? = null
     val kitchen : KitchenDaoImpl = KitchenDaoImpl()
-    private val serializer: Serializer = Serializer()
+    val serializer: Serializer = Serializer()
     companion object {
         private var instance : RestaurantDaoImpl? = null
         fun getInstance() : RestaurantDaoImpl {

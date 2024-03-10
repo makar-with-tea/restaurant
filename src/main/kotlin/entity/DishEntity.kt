@@ -1,9 +1,5 @@
 package entity
 
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-
-
 data class DishEntity(
     val dishId : Int = 0,
     var name : String = "",

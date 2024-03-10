@@ -1,1 +1,1 @@
-{"orderId":7,"visitorId":10,"dishIds":[0],"status":"COOKING","priority":"NORMAL","payed":false}
+{"orderId":7,"visitorId":10,"dishIds":[0,6],"status":"READY","priority":"NORMAL","payed":false}

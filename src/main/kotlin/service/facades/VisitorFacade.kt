@@ -1,8 +1,6 @@
 package service.facades
 
 import dao.RestaurantDaoImpl
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.example.*
 import service.Validator
 import service.enums.OrderStatus
@@ -107,15 +105,17 @@ class VisitorFacade(private val validator : Validator = Validator()) {
         if (!validator.validateOrderId(orderId)) return println("Заказа с таким id не существует!")
         if (!validator.validateUserForOrder(orderId)) return println("У Вас нет доступа к этому заказу!")
         if (RestaurantDaoImpl.getInstance().visitor.payForOrder(orderId)) {
-            var ans : Int
-            do {
-                ans = readInt("Заказ успешно оплачен. Хотите ли оставить отзыв? 1 - да, 2 - нет")
-            } while (ans < 1 || ans > 2)
-            if (ans == 1) return leaveReview()
+            println("Заказ успешно оплачен.")
+            return leaveReview()
         } else println("Ошибка при оплате заказа!")
     }
     private fun leaveReview() {
+        var ans : Int
         while (true) {
+            do {
+                ans = readInt("Хотите ли оставить отзыв? 1 - да, 2 - нет")
+            } while (ans < 1 || ans > 2)
+            if (ans == 2) return
             var mes = "Введите Id блюда, на которое хотите оставить отзыв:"
             var dishId: Int
             do {
@@ -129,8 +129,11 @@ class VisitorFacade(private val validator : Validator = Validator()) {
             } while (mark < 1 || mark > 5)
             println("Введите ваш комментарий по данному блюду:")
             val comment = readln()
+            if (RestaurantDaoImpl.getInstance().visitor.leaveReview(dishId, mark, comment)) {
+                println("Отзыв успешно сохранен.")
+            } else println("Ошибка при сохранении отзыва!")
         }
-    }//(dishId : Int, mark : Int, comment : String);
+    }
 
     private fun getOrders() {
         println("Id Ваших заказов: ${RestaurantDaoImpl.getInstance().visitor.getOrders()}")

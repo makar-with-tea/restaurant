@@ -1,7 +1,6 @@
 package dao
 
 import entity.DishEntity
-import kotlin.time.Duration
 
 interface DishDao {
     fun setNumber(dish : DishEntity, number : Int);

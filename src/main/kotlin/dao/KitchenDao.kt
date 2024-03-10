@@ -7,9 +7,8 @@ import service.Serializer
 import service.enums.OrderStatus
 import service.exception.*
 
-interface KitchenDao { // работа с потоками, mediator or command
-    suspend fun makeOrder(orderId : Int) // --dish.number; поток
-    //fun cookDish(dishId: Int) : Boolean;
+interface KitchenDao {
+    suspend fun makeOrder(orderId : Int)
 }
 
 class KitchenDaoImpl : KitchenDao {
@@ -22,7 +21,6 @@ class KitchenDaoImpl : KitchenDao {
             var order: OrderEntity
             var dish: DishEntity
             do {
-                println("$orderId $ind")
                 order = serializer.readOrder(orderId)
                 if (order.status == OrderStatus.INPROGRESS) {
                     order.status = OrderStatus.COOKING
@@ -30,17 +28,18 @@ class KitchenDaoImpl : KitchenDao {
                 }
                 if (order.dishIds.size == 0) break
                 dish = serializer.readDish(order.dishIds[ind])
-                println(dish)
                 if (dish.number == 0) {
                     order.status = OrderStatus.DENIED
                     serializer.writeOrder(order)
                     throw RanOutOfDishException("Блюдо ${dish.name} закончилось!")
                 }
+                println("Блюдо ${dish.name} из заказа $orderId готово.")
                 dishHandler.cookPortion(dish)
                 serializer.writeDish(dish)
                 ++ind
                 delay(dish.cookingTime)
             } while (ind < order.dishIds.size)
+            println("Заказ $orderId готов.")
             order.status = OrderStatus.READY
             serializer.writeOrder(order)
         } catch (e: Exception) {
