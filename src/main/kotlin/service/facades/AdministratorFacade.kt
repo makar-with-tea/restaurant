@@ -1,38 +1,37 @@
-package service.interfaces
+package service.facades
 
 import dao.RestaurantDaoImpl
-import kotlinx.coroutines.runBlocking
 import org.example.*
 import service.Validator
 
-class AdminFuncs(private val validator : Validator = Validator()) {
-    fun adminMain() {
+class AdministratorFacade(private val validator : Validator = Validator()) {
+    suspend fun adminMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
-            |0 - посмотреть меню
-            |1 - добавить блюдо в меню
-            |2 - удалить блюдо из меню
-            |3 - изменить количество единиц блюда в ресторане
-            |4 - изменить цену блюда
-            |5 - изменить время приготовления блюда
-            |6 - посмотреть прибыль ресторана
-            |7 - зайти в другой аккаунт
-            |8 - удалить аккаунт
-            |9 - завершить работу приложения
+            |1 - посмотреть меню
+            |2 - добавить блюдо в меню
+            |3 - удалить блюдо из меню
+            |4 - изменить количество единиц блюда в ресторане
+            |5 - изменить цену блюда
+            |6 - изменить время приготовления блюда
+            |7 - посмотреть прибыль ресторана
+            |8 - зайти в другой аккаунт
+            |9 - удалить аккаунт
+            |10 - завершить работу приложения
         """.trimMargin()
         var command: Int
         while (true) {
-            do command = readInt(adminMes) while (command > 9)
+            do command = readInt(adminMes) while (command > 10 || command < 1)
             when (command) {
-                0 -> printMenu()
-                1 -> addDish()
-                2 -> deleteDish()
-                3 -> setNumber()
-                4 -> setPrice()
-                5 -> setCookingTime()
-                6 -> getRevenue()
-                7 -> return startWork()
-                8 -> return deleteAcc()
-                9 -> return finish()
+                1 -> RestaurantFacade.getInstance().printMenu()
+                2 -> addDish()
+                3 -> deleteDish()
+                4 -> setNumber()
+                5 -> setPrice()
+                6 -> setCookingTime()
+                7 -> getRevenue()
+                8 -> return RestaurantFacade.getInstance().startWork()
+                9 -> return RestaurantFacade.getInstance().deleteAcc()
+                10 -> return RestaurantFacade.getInstance().finish()
             }
         }
     }

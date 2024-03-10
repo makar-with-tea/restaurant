@@ -6,7 +6,7 @@ import service.enums.Role
 import service.Serializer
 import service.exception.FileFailureException
 
-interface RestaurantDao { // чел вошел в ресторан
+interface RestaurantDao {
     fun registerUser(role: Role, login: String, password: String): Boolean;
     fun logInUser(login: String, password: String): Boolean;
 }
