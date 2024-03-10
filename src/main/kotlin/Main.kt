@@ -13,7 +13,8 @@ import service.interfaces.AdminFuncs
 import service.interfaces.VisitorFuncs
 import kotlin.system.exitProcess
 
-
+val validator = Validator()
+val serializer = Serializer()
 suspend fun startWork() {
     val adminHandler = AdminFuncs()
     val visitorHandler = VisitorFuncs()
@@ -48,12 +49,12 @@ fun regUser() : Boolean {
     do {
         println("Введите логин, состоящий только из латинских букв и цифр.")
         input = readln()
-    } while (!Validator.getInstance().validateString(input))
+    } while (!validator.validateString(input))
     val login = input
     do {
         println("Введите пароль, состоящий только из латинских букв и цифр.")
         input = readln()
-    } while (!Validator.getInstance().validateString(input))
+    } while (!validator.validateString(input))
     val password = input
     return RestaurantDaoImpl.getInstance().registerUser(role, login, password)
 }
@@ -64,13 +65,13 @@ fun logInUser() : Boolean {
         println("Введите логин, состоящий только из латинских букв и цифр, " +
                 "или введите -1, чтобы перейти к созданию аккаунта.")
         input = readln()
-    } while (!Validator.getInstance().validateString(input) && input != "-1")
+    } while (!validator.validateString(input) && input != "-1")
     if (input == "-1") return regUser()
     val login = input
     do {
         println("Введите пароль, состоящий только из латинских букв и цифр.")
         input = readln()
-    } while (!Validator.getInstance().validateString(input))
+    } while (!validator.validateString(input))
     val password = input
     return RestaurantDaoImpl.getInstance().logInUser(login, password)
 }
@@ -80,7 +81,7 @@ suspend fun deleteAcc() {
     var command : Int
     do command = readInt(confirm) while (command > 2 || command == 0)
     if (command == 2) return
-    Serializer.getInstance().deleteUser(RestaurantDaoImpl.getInstance().currentUser!!.userId)
+    serializer.deleteUser(RestaurantDaoImpl.getInstance().currentUser!!.userId)
     RestaurantDaoImpl.getInstance().currentUser = null
     startWork()
 }
@@ -99,7 +100,7 @@ fun readInt(mes : String) : Int {
     do {
         println(mes)
         str = readln()
-    } while (!Validator.getInstance().validateNumber(str))
+    } while (!validator.validateNumber(str))
     return str.toInt()
 }
 
@@ -108,7 +109,7 @@ fun readLong(mes : String) : Long {
     do {
         println(mes)
         str = readln()
-    } while (!Validator.getInstance().validateNumber(str))
+    } while (!validator.validateNumber(str))
     return str.toLong()
 }
 

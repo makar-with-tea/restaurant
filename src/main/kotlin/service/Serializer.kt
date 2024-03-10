@@ -11,11 +11,6 @@ import java.io.File
 class Serializer {
     companion object {
         val mapper = ObjectMapper()
-        private var instance: Serializer? = null
-        fun getInstance() : Serializer {
-            if (instance == null) instance = Serializer()
-            return instance!!
-        }
     }
     init {
         var folder = File("src\\main\\data")

@@ -2,6 +2,7 @@ package dao
 
 import entity.DishEntity
 import dao.DishDaoImpl
+import org.example.serializer
 import service.Serializer
 
 interface AdministratorDao {
@@ -16,7 +17,7 @@ interface AdministratorDao {
 class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl()) : AdministratorDao {
     override fun addDish(name: String, cookingTime: Long, price: Int, number: Int): Boolean {
         try {
-            Serializer.getInstance().writeDish(DishEntity(Serializer.getInstance().getMaxDishId(),
+            serializer.writeDish(DishEntity(serializer.getMaxDishId(),
                 name, cookingTime, price, number))
             return true
         }
@@ -28,7 +29,7 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
 
     override fun deleteDish(dishId: Int): Boolean {
         try {
-            Serializer.getInstance().deleteDish(dishId)
+            serializer.deleteDish(dishId)
             return true
         }
         catch (e : Exception) {
@@ -39,9 +40,9 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
 
     override fun setNumber(dishId: Int, number: Int): Boolean {
         try {
-            val dish = Serializer.getInstance().readDish(dishId)
+            val dish = serializer.readDish(dishId)
             dishHandler.setNumber(dish, number)
-            Serializer.getInstance().writeDish(dish)
+            serializer.writeDish(dish)
             return true
         }
         catch (e : Exception) {
@@ -52,9 +53,9 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
 
     override fun setPrice(dishId: Int, price: Int): Boolean {
         try {
-            val dish = Serializer.getInstance().readDish(dishId)
+            val dish = serializer.readDish(dishId)
             dishHandler.setPrice(dish, price)
-            Serializer.getInstance().writeDish(dish)
+            serializer.writeDish(dish)
             return true
         }
         catch (e : Exception) {
@@ -65,9 +66,9 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
 
     override fun setCookingTime(dishId: Int, time: Long): Boolean {
         try {
-            val dish = Serializer.getInstance().readDish(dishId)
+            val dish = serializer.readDish(dishId)
             dishHandler.setCookingTime(dish, time)
-            Serializer.getInstance().writeDish(dish)
+            serializer.writeDish(dish)
             return true
         }
         catch (e : Exception) {
@@ -77,7 +78,7 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
     }
 
     override fun getRevenue(): Int {
-        return Serializer.getInstance().getRevenue()
+        return serializer.getRevenue()
     }
 
 }

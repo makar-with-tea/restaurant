@@ -1,19 +1,13 @@
 package service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dao.RestaurantDaoImpl
 import service.Serializer
 import service.exception.FileFailureException
 
 class Validator {
-    companion object {
-        private var instance: Validator? = null
-        fun getInstance(): Validator {
-            if (instance == null) instance = Validator()
-            return instance!!
-        }
-    }
-
     private val alphabet: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    private val serializer = Serializer()
 
     private fun isDigit(arg: String): Boolean {
         if (arg.isEmpty()) return false
@@ -38,7 +32,7 @@ class Validator {
 
     fun validateDishId(dishId: Int) : Boolean {
         try {
-            Serializer.getInstance().readDish(dishId)
+            serializer.readDish(dishId)
             return true
         }
         catch (e: FileFailureException) {
@@ -48,11 +42,17 @@ class Validator {
 
     fun validateOrderId(orderId: Int) : Boolean {
         try {
-            Serializer.getInstance().readOrder(orderId)
+            serializer.readOrder(orderId)
             return true
         }
         catch (e: FileFailureException) {
             return false
         }
+    }
+
+    fun validateUserForOrder(orderId: Int) : Boolean {
+        if (!validateOrderId(orderId)) return false
+        return serializer.readOrder(orderId).visitorId ==
+                (RestaurantDaoImpl.getInstance().currentUser?.userId ?: return false)
     }
 }

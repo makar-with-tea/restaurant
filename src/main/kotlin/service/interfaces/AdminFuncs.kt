@@ -4,7 +4,7 @@ import dao.RestaurantDaoImpl
 import org.example.*
 import service.Validator
 
-class AdminFuncs {
+class AdminFuncs(private val validator : Validator = Validator()) {
     suspend fun adminMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |0 - посмотреть меню
@@ -41,7 +41,7 @@ class AdminFuncs {
         do {
             println("Введите название блюда, состоящее только из латинских букв и цифр.")
             name = readln()
-        } while (!Validator.getInstance().validateString(name))
+        } while (!validator.validateString(name))
         val cookingTime = readLong("Введите время приготовления блюда в миллисекундах.")
         val price = readInt("Введите число - цену блюда в рублях.")
         val number = readInt("Введите число - количество единиц блюда в ресторане.")

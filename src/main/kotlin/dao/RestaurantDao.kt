@@ -15,6 +15,8 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
     val admin: AdministratorDaoImpl = AdministratorDaoImpl()
     val visitor : VisitorDaoImpl = VisitorDaoImpl()
     var currentUser : UserEntity? = null
+    val kitchen : KitchenDaoImpl = KitchenDaoImpl()
+    private val serializer: Serializer = Serializer()
     companion object {
         private var instance : RestaurantDaoImpl? = null
         fun getInstance() : RestaurantDaoImpl {
@@ -24,9 +26,9 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
     }
     override fun registerUser(role : Role, login: String, password: String) : Boolean {
         try {
-            currentUser = UserEntity(Serializer.getInstance().getMaxUserId(), role, login, password)
-            Serializer.getInstance().writeUser(
-                UserEntity(Serializer.getInstance().getMaxUserId(), role, login, password))
+            currentUser = UserEntity(serializer.getMaxUserId(), role, login, password)
+            serializer.writeUser(
+                UserEntity(serializer.getMaxUserId(), role, login, password))
             return true
         }
         catch (e : Exception) {
@@ -36,9 +38,9 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
     }
 
     override fun logInUser(login: String, password: String): Boolean {
-        for (ind in 0..<Serializer.getInstance().getMaxUserId()) {
+        for (ind in 0..<serializer.getMaxUserId()) {
             try {
-                val user = Serializer.getInstance().readUser(ind)
+                val user = serializer.readUser(ind)
                 if (user.login == login && user.password == password) {
                     currentUser = user
                     return true
@@ -53,9 +55,10 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
 
     fun getMenu() : String {
         val menu : ArrayList<String> = arrayListOf()
-        for (i in 0..<Serializer.getInstance().getMaxDishId()) {
+        for (i in 0..<serializer.getMaxDishId()) {
             try {
-                menu.add(Serializer.getInstance().readDish(i).toString())
+                val dish = serializer.readDish(i)
+                menu.add("Id: ${dish.dishId}, название: ${dish.name}")
             }
             catch (e : FileFailureException) { continue }
         }

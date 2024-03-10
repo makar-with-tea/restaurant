@@ -5,40 +5,44 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import service.Serializer
+import service.Validator
 import service.exception.FileFailureException
 import service.enums.OrderStatus
 
 interface VisitorDao {
-    fun startOrder(dishIds : ArrayList<Int> = arrayListOf()) : Boolean;
+    fun startOrder(dishIds : ArrayList<Int> = arrayListOf()) : Int;
     fun addDishToOrder(dishId : Int, orderId : Int) : Boolean;
     suspend fun finishOrder(orderId : Int);
     fun cancelOrder(orderId : Int) : Boolean;
     fun getStatus(orderId : Int) : OrderStatus;
     fun payForOrder(orderId : Int) : Boolean;
     fun leaveReview(dishId : Int, mark : Int, comment : String);
+    fun getOrders() : ArrayList<Int>;
 }
 
-class VisitorDaoImpl : VisitorDao {
-    override fun startOrder(dishIds: ArrayList<Int>): Boolean {
+class VisitorDaoImpl(private val validator: Validator = Validator()) : VisitorDao {
+    private val serializer : Serializer = Serializer()
+    override fun startOrder(dishIds: ArrayList<Int>): Int {
         try {
-            Serializer.getInstance().writeOrder(
+            serializer.writeOrder(
                 OrderEntity(
-                    Serializer.getInstance().getMaxOrderId(), RestaurantDaoImpl.getInstance().currentUser!!.userId,
+                    serializer.getMaxOrderId(), RestaurantDaoImpl.getInstance().currentUser!!.userId,
                     dishIds, OrderStatus.INPROGRESS
                 )
             )
-            return true
+            return serializer.getMaxOrderId() - 1
         } catch (e: FileFailureException) {
             println(e.message)
-            return false
+            return -1
         }
     }
 
     override fun addDishToOrder(dishId: Int, orderId: Int): Boolean {
         try {
-            val order = Serializer.getInstance().readOrder(orderId)
+            val order = serializer.readOrder(orderId)
+            if (!validator.validateUserForOrder(orderId)) return false
             order.dishIds.add(dishId)
-            Serializer.getInstance().writeOrder(order)
+            serializer.writeOrder(order)
             return true
         } catch (e: FileFailureException) {
             println(e.message)
@@ -48,7 +52,8 @@ class VisitorDaoImpl : VisitorDao {
 
     override suspend fun finishOrder(orderId: Int) {
         try {
-            KitchenDaoImpl.getInstance().makeOrder(orderId)
+            if (!validator.validateUserForOrder(orderId)) return
+            RestaurantDaoImpl.getInstance().kitchen.makeOrder(orderId)
         } catch (e: Exception) {
             println(e.message)
         }
@@ -56,7 +61,8 @@ class VisitorDaoImpl : VisitorDao {
 
     override fun cancelOrder(orderId: Int): Boolean {
         try {
-            Serializer.getInstance().deleteOrder(orderId)
+            if (!validator.validateUserForOrder(orderId)) return false
+            serializer.deleteOrder(orderId)
             return true
         }
         catch (e : FileFailureException) {
@@ -67,7 +73,8 @@ class VisitorDaoImpl : VisitorDao {
 
     override fun getStatus(orderId: Int): OrderStatus {
         return try {
-            Serializer.getInstance().readOrder(orderId).status
+            if (!validator.validateUserForOrder(orderId)) return OrderStatus.ERROR
+            serializer.readOrder(orderId).status
         } catch (e : FileFailureException) {
             OrderStatus.ERROR
         }
@@ -75,16 +82,17 @@ class VisitorDaoImpl : VisitorDao {
 
     override fun payForOrder(orderId: Int) : Boolean {
         try {
-            val order = Serializer.getInstance().readOrder(orderId)
+            val order = serializer.readOrder(orderId)
             if (order.payed) return false
+            if (!validator.validateUserForOrder(orderId)) return false
             var sum = 0
             for (dishId in order.dishIds) {
-                val dish = Serializer.getInstance().readDish(dishId)
+                val dish = serializer.readDish(dishId)
                 sum += dish.price
             }
-            Serializer.getInstance().updateRevenue(sum)
+            serializer.updateRevenue(sum)
             order.payed = true
-            Serializer.getInstance().writeOrder(order)
+            serializer.writeOrder(order)
             return true
         } catch (e : FileFailureException) {
             println(e.message)
@@ -94,5 +102,21 @@ class VisitorDaoImpl : VisitorDao {
 
     override fun leaveReview(dishId : Int, mark : Int, comment : String) {
 
+    }
+
+    override fun getOrders(): ArrayList<Int> {
+        val res = arrayListOf<Int>()
+        for (ind in 0..<serializer.getMaxOrderId()) {
+            try {
+                val order = serializer.readOrder(ind)
+                if (order.visitorId == (RestaurantDaoImpl.getInstance().currentUser?.userId ?: return arrayListOf())) {
+                    res.add(order.orderId)
+                }
+            }
+            catch (e : FileFailureException) {
+                continue
+            }
+        }
+        return res
     }
 }
