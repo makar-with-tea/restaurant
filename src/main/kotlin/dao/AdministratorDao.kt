@@ -10,6 +10,7 @@ interface AdministratorDao {
     fun setNumber(dishId : Int, number : Int) : Boolean;
     fun setPrice(dishId : Int, price : Int) : Boolean;
     fun setCookingTime(dishId : Int, time : Long) : Boolean;
+    fun getRevenue() : Int;
 }
 
 class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl()) : AdministratorDao {
@@ -73,6 +74,10 @@ class AdministratorDaoImpl(private val dishHandler: DishDaoImpl = DishDaoImpl())
             println(e.message)
             return false
         }
+    }
+
+    override fun getRevenue(): Int {
+        return Serializer.getInstance().getRevenue()
     }
 
 }

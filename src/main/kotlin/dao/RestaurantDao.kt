@@ -51,8 +51,15 @@ class RestaurantDaoImpl private constructor() : RestaurantDao {
         return false
     }
 
-    fun getMenu() {
-        TODO("Yes.")
+    fun getMenu() : String {
+        val menu : ArrayList<String> = arrayListOf()
+        for (i in 0..<Serializer.getInstance().getMaxDishId()) {
+            try {
+                menu.add(Serializer.getInstance().readDish(i).toString())
+            }
+            catch (e : FileFailureException) { continue }
+        }
+        return menu.joinToString("\n")
     }
 
 }

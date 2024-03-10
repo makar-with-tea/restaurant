@@ -8,5 +8,6 @@ data class OrderEntity(
     val visitorId : Int = 0,
     var dishIds : ArrayList<Int> = arrayListOf(),
     var status : OrderStatus = OrderStatus.INPROGRESS,
-    var priority : Priority = Priority.NORMAL
+    var priority : Priority = Priority.NORMAL,
+    var payed : Boolean = false
 )

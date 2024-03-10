@@ -23,36 +23,31 @@ class KitchenDaoImpl private constructor() : KitchenDao {
         }
     }
 
-    override suspend fun makeOrder(orderId: Int): Unit = runBlocking {
+    override suspend fun makeOrder(orderId: Int) {
         try {
-            launch {
-                var ind: Int = 0
-                var order: OrderEntity
-                var dish: DishEntity
-                do {
-                    println("$orderId $ind")
-                    order = Serializer.getInstance().readOrder(orderId)
-                    if (order.status == OrderStatus.INPROGRESS) {
-                        order.status = OrderStatus.COOKING
-                        Serializer.getInstance().writeOrder(order)
-                    }
-                    val lock = Any()
-                    synchronized(lock) {
-                        dish = Serializer.getInstance().readDish(order.dishIds[ind])
-                        println(dish)
-                        if (dish.number == 0) {
-                            order.status = OrderStatus.DENIED
-                            Serializer.getInstance().writeOrder(order)
-                            throw RanOutOfDishException("Блюдо ${dish.name} закончилось!")
-                        }
-                        --dish.number
-                        Serializer.getInstance().writeDish(dish)
-                        ++ind
-                    }
-                    delay(dish.cookingTime)
-                } while (ind < order.dishIds.size)
-                order.status = OrderStatus.READY
-            }
+            var ind: Int = 0
+            var order: OrderEntity
+            var dish: DishEntity
+            do {
+                println("$orderId $ind")
+                order = Serializer.getInstance().readOrder(orderId)
+                if (order.status == OrderStatus.INPROGRESS) {
+                    order.status = OrderStatus.COOKING
+                    Serializer.getInstance().writeOrder(order)
+                }
+                dish = Serializer.getInstance().readDish(order.dishIds[ind])
+                println(dish)
+                if (dish.number == 0) {
+                    order.status = OrderStatus.DENIED
+                    Serializer.getInstance().writeOrder(order)
+                    throw RanOutOfDishException("Блюдо ${dish.name} закончилось!")
+                }
+                --dish.number
+                Serializer.getInstance().writeDish(dish)
+                ++ind
+                delay(dish.cookingTime)
+            } while (ind < order.dishIds.size)
+            order.status = OrderStatus.READY
         } catch (e: Exception) {
             println(e.message)
         }

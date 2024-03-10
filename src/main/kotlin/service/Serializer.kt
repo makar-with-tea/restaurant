@@ -78,7 +78,7 @@ class Serializer {
         val jsonFile = File("src\\main\\data\\maxIds\\maxDishId.json")
         mapper.writeValue(jsonFile, getMaxDishId() + 1)
     }
-    fun getMaxDishId(): Int {
+    fun getMaxDishId() : Int {
         val jsonFile = File("src\\main\\data\\maxIds\\maxDishId.json")
         if (!jsonFile.exists()) {
             return 0
@@ -98,6 +98,18 @@ class Serializer {
         val rootNode: JsonNode = mapper.readTree(jsonFile)
         return rootNode.asInt()
     }
+    fun getRevenue() : Int {
+        val jsonFile = File("src\\main\\data\\revenue.json")
+        if (!jsonFile.exists()) {
+            return 0
+        }
+        val rootNode: JsonNode = mapper.readTree(jsonFile)
+        return rootNode.asInt()
+    }
+    fun updateRevenue(newProfit : Int) {
+        val jsonFile = File("src\\main\\data\\revenue.json")
+        mapper.writeValue(jsonFile, getRevenue() + newProfit)
+    }
     fun writeUser(user: UserEntity) {
         val jsonFile = File("src\\main\\data\\users\\user${user.userId}.json")
         try {
@@ -114,12 +126,12 @@ class Serializer {
             return mapper.readValue(jsonFile, UserEntity::class.java)
         }
         catch (e : Exception) {
-            print(e.message)
             throw FileFailureException("Ошибка при чтении информации о пользователе!")
         }
     }
     fun deleteUser(userId: Int) {
         val jsonFile = File("src\\main\\data\\users\\user$userId.json")
+        if (!jsonFile.exists()) throw FileFailureException("Ошибка при удалении файла пользователя!")
         try {
             jsonFile.delete()
         }
@@ -143,12 +155,12 @@ class Serializer {
             return mapper.readValue(jsonFile, DishEntity::class.java)
         }
         catch (e : Exception) {
-            println(e.message)
             throw FileFailureException("Ошибка при чтении информации о блюде!")
         }
     }
     fun deleteDish(dishId: Int) {
         val jsonFile = File("src\\main\\data\\dishes\\dish$dishId.json")
+        if (!jsonFile.exists()) throw FileFailureException("Ошибка при удалении файла блюда!")
         try {
             jsonFile.delete()
         }
@@ -172,12 +184,12 @@ class Serializer {
             return mapper.readValue(jsonFile, OrderEntity::class.java)
         }
         catch (e : Exception) {
-            print(e.message)
             throw FileFailureException("Ошибка при чтении информации о заказе!")
         }
     }
     fun deleteOrder(orderId: Int) {
         val jsonFile = File("src\\main\\data\\orders\\order$orderId.json")
+        if (!jsonFile.exists()) throw FileFailureException("Ошибка при удалении файла заказа!")
         try {
             jsonFile.delete()
         }
