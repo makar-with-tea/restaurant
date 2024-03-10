@@ -1,6 +1,7 @@
 package dao
 
 import entity.OrderEntity
+import entity.ReviewEntity
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -16,7 +17,8 @@ interface VisitorDao {
     fun cancelOrder(orderId : Int) : Boolean;
     fun getStatus(orderId : Int) : OrderStatus;
     fun payForOrder(orderId : Int) : Boolean;
-    fun leaveReview(dishId : Int, mark : Int, comment : String);
+    fun leaveReviewForOrder(orderId : Int) : Boolean;
+    fun leaveReviewForDish(dishId : Int, mark : Int, comment : String) : Boolean;
     fun getOrders() : ArrayList<Int>;
 }
 
@@ -100,8 +102,22 @@ class VisitorDaoImpl(private val validator: Validator = Validator()) : VisitorDa
         }
     }
 
-    override fun leaveReview(dishId : Int, mark : Int, comment : String) {
+    override fun leaveReviewForOrder(orderId: Int): Boolean {
+        try {
+            val order = serializer.readOrder(orderId)
+            for (e in )
+        } catch (e : FileFailureException) {
+            return false
+        }
+    }
 
+    override fun leaveReviewForDish(dishId : Int, mark : Int, comment : String) : Boolean {
+        try {
+            serializer.updateReviews(ReviewEntity(dishId, mark, comment))
+            return true
+        } catch (e : FileFailureException) {
+            return false
+        }
     }
 
     override fun getOrders(): ArrayList<Int> {

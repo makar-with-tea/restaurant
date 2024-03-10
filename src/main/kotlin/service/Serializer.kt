@@ -1,9 +1,11 @@
 package service
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import entity.DishEntity
 import entity.OrderEntity
+import entity.ReviewEntity
 import entity.UserEntity
 import service.exception.FileFailureException
 import java.io.File
@@ -54,8 +56,10 @@ class Serializer {
                 throw FileFailureException("Ошибка при создании директории максимальных id!")
             }
         }
-        val jsonFile = File("src\\main\\data\\revenue.json")
+        var jsonFile = File("src\\main\\data\\revenue.json")
         mapper.writeValue(jsonFile, 0)
+        jsonFile = File("src\\main\\data\\reviews.json")
+        mapper.writeValue(jsonFile, arrayListOf<ReviewEntity>())
     }
 
     private fun updateMaxUserId() {
@@ -120,6 +124,32 @@ class Serializer {
         synchronized(lock) {
             val jsonFile = File("src\\main\\data\\revenue.json")
             mapper.writeValue(jsonFile, getRevenue() + newProfit)
+        }
+    }
+    fun getReviews() : ArrayList<ReviewEntity> {
+        synchronized(lock) {
+            val jsonFile = File("src\\main\\data\\reviews.json")
+            if (!jsonFile.exists()) {
+                return arrayListOf()
+            }
+            val typeReference = object : TypeReference<ArrayList<ReviewEntity>>() {}
+            try {
+                return mapper.readValue(jsonFile, typeReference)
+            }catch (e : Exception) {
+                throw FileFailureException("Ошибка при чтении отзывов!")
+            }
+        }
+    }
+    fun updateReviews(newReview: ReviewEntity) {
+        synchronized(lock) {
+            val jsonFile = File("src\\main\\data\\reviews.json")
+            try {
+                val reviews = getReviews()
+                reviews.add(newReview)
+                mapper.writeValue(jsonFile, reviews)
+            } catch (e : Exception) {
+                throw FileFailureException("Ошибка при сохранении отзыва!")
+            }
         }
     }
     fun writeUser(user: UserEntity) {

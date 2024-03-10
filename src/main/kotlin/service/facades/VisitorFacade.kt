@@ -73,7 +73,6 @@ class VisitorFacade(private val validator : Validator = Validator()) {
         if (validator.validateDishId(dishId)) {
             mes = "Введите id вашего заказа:"
             val orderId = readInt(mes)
-
             if (!validator.validateOrderId(orderId)) return println("Заказа с таким id не существует!")
             if (!validator.validateUserForOrder(orderId)) return println("У Вас нет доступа к этому заказу!")
             if (RestaurantDaoImpl.getInstance().visitor.addDishToOrder(dishId, orderId)) {
@@ -115,10 +114,31 @@ class VisitorFacade(private val validator : Validator = Validator()) {
         if (!validator.validateOrderId(orderId)) return println("Заказа с таким id не существует!")
         if (!validator.validateUserForOrder(orderId)) return println("У Вас нет доступа к этому заказу!")
         if (RestaurantDaoImpl.getInstance().visitor.payForOrder(orderId)) {
-            println("Заказ успешно оплачен. Хотите ли оставить отзыв? 1 - да, 2 - нет")
+            var ans : Int
+            do {
+                ans = readInt("Заказ успешно оплачен. Хотите ли оставить отзыв? 1 - да, 2 - нет")
+            } while (ans < 1 || ans > 2)
+            if (ans == 1) return leaveReview()
         } else println("Ошибка при оплате заказа!")
     }
-    private fun leaveReview(){}//(dishId : Int, mark : Int, comment : String);
+    private fun leaveReview() {
+        while (true) {
+            var mes = "Введите Id блюда, на которое хотите оставить отзыв:"
+            var dishId: Int
+            do {
+                dishId = readInt(mes)
+                mes = "Блюда с таким id не существует! Введите Id блюда, на которое хотите оставить отзыв:"
+            } while (!validator.validateDishId(dishId))
+            mes = "Введите Вашу оценку от 1 до 5:"
+            var mark: Int
+            do {
+                mark = readInt(mes)
+            } while (mark < 1 || mark > 5)
+            println("Введите ваш комментарий по данному блюду:")
+            val comment = readln()
+        }
+    }//(dishId : Int, mark : Int, comment : String);
+
     private fun getOrders() {
         println("Id Ваших заказов: ${RestaurantDaoImpl.getInstance().visitor.getOrders()}")
     }
