@@ -1,51 +1,49 @@
 package service.interfaces
 
 import dao.RestaurantDaoImpl
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.example.*
 import service.Validator
-import service.Serializer
 import service.enums.OrderStatus
 
 class VisitorFuncs(private val validator : Validator = Validator()) {
     suspend fun visitorMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
-            |0 - посмотреть меню
-            |1 - начать оформление заказа
-            |2 - добавить блюдо из меню в заказ
-            |3 - завершить оформление заказа
-            |4 - отменить заказ
-            |5 - узнать статус заказа
-            |6 - оплатить заказ
-            |7 - зайти в другой аккаунт
-            |8 - удалить аккаунт
-            |9 - посмотреть список id Ваших заказов
-            |10 - завершить работу приложения
+            |1 - посмотреть меню
+            |2 - начать оформление заказа
+            |3 - добавить блюдо из меню в заказ
+            |4 - завершить оформление заказа
+            |5 - отменить заказ
+            |6 - узнать статус заказа
+            |7 - оплатить заказ
+            |8 - зайти в другой аккаунт
+            |9 - удалить аккаунт
+            |10 - посмотреть список id Ваших заказов
+            |11 - завершить работу приложения
         """.trimMargin()
         var command: Int
         while (true) {
-            do command = readInt(adminMes) while (command > 10)
+            do command = readInt(adminMes) while (command > 11 || command < 1)
             runBlocking {
                 when (command) {
-                    0 -> printMenu()
-                    1 -> startOrder()
-                    2 -> addDishToOrder()
-                    3 -> launch { finishOrder()}
-                    4 -> cancelOrder()
-                    5 -> getStatus()
-                    6 -> payForOrder()
-                    7 -> {
+                    1 -> printMenu()
+                    2 -> startOrder()
+                    3 -> addDishToOrder()
+                    4 -> launch { finishOrder()}
+                    5 -> cancelOrder()
+                    6 -> getStatus()
+                    7 -> payForOrder()
+                    8 -> {
                         startWork()
                         return@runBlocking
                     }
-                    8 -> {
+                    9 -> {
                         deleteAcc()
                         return@runBlocking
                     }
-                    9 -> getOrders()
-                    10 -> finish()
+                    10 -> getOrders()
+                    11 -> finish()
                     //leaveReview - только после оплаты
                 }
             }

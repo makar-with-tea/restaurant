@@ -8,17 +8,17 @@ import service.enums.OrderStatus
 import service.exception.*
 
 interface KitchenDao { // работа с потоками, mediator or command
-    suspend fun makeOrder(orderId : Int); // --dish.number; поток
+    suspend fun makeOrder(orderId : Int) // --dish.number; поток
     //fun cookDish(dishId: Int) : Boolean;
 }
 
 class KitchenDaoImpl : KitchenDao {
     private val dishHandler: DishDaoImpl = DishDaoImpl()
-    val serializer: Serializer = Serializer()
+    private val serializer: Serializer = Serializer()
 
     override suspend fun makeOrder(orderId: Int) {
         try {
-            var ind: Int = 0
+            var ind = 0
             var order: OrderEntity
             var dish: DishEntity
             do {
