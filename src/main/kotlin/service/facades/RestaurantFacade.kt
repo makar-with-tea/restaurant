@@ -16,8 +16,8 @@ class RestaurantFacade private constructor() {
         }
     }
     suspend fun startWork() {
-        val adminHandler = AdminFuncs()
-        val visitorHandler = VisitorFuncs()
+        val adminHandler = AdministratorFacade()
+        val visitorHandler = VisitorFacade()
         val regMes = """Здравствуйте! Чтобы начать работу с приложением, зарегистрируйтесь или войдите в аккаунт.
     Введите одно из чисел:
     1 - Зарегистрироваться

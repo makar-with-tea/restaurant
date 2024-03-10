@@ -4,7 +4,7 @@ import dao.RestaurantDaoImpl
 import org.example.*
 import service.Validator
 
-class AdminFuncs(private val validator : Validator = Validator()) {
+class AdministratorFacade(private val validator : Validator = Validator()) {
     suspend fun adminMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |1 - посмотреть меню

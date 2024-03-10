@@ -7,7 +7,7 @@ import org.example.*
 import service.Validator
 import service.enums.OrderStatus
 
-class VisitorFuncs(private val validator : Validator = Validator()) {
+class VisitorFacade(private val validator : Validator = Validator()) {
     suspend fun visitorMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |1 - посмотреть меню
