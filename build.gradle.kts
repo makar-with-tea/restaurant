@@ -10,7 +10,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 tasks.test {
