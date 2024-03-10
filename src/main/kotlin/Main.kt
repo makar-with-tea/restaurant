@@ -25,6 +25,6 @@ fun readLong(mes : String) : Long {
     return str.toLong()
 }
 
-suspend fun main() {
+fun main() {
     RestaurantFacade.getInstance().startWork()
 }

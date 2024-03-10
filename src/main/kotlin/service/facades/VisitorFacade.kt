@@ -8,7 +8,7 @@ import service.Validator
 import service.enums.OrderStatus
 
 class VisitorFacade(private val validator : Validator = Validator()) {
-    suspend fun visitorMain() {
+    fun visitorMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |1 - посмотреть меню
             |2 - начать оформление заказа
@@ -25,30 +25,23 @@ class VisitorFacade(private val validator : Validator = Validator()) {
         var command: Int
         while (true) {
             do command = readInt(adminMes) while (command > 11 || command < 1)
-            runBlocking {
-                when (command) {
-                    1 -> RestaurantFacade.getInstance().printMenu()
-                    2 -> startOrder()
-                    3 -> addDishToOrder()
-                    4 -> launch { finishOrder()}
-                    5 -> cancelOrder()
-                    6 -> getStatus()
-                    7 -> payForOrder()
-                    8 -> {
-                        RestaurantFacade.getInstance().startWork()
-                        return@runBlocking
-                    }
-                    9 -> {
-                        RestaurantFacade.getInstance().deleteAcc()
-                        return@runBlocking
-                    }
-                    10 -> getOrders()
-                    11 -> RestaurantFacade.getInstance().finish()
-                    //leaveReview - только после оплаты
-                }
+            when (command) {
+                1 -> RestaurantFacade.getInstance().printMenu()
+                2 -> startOrder()
+                3 -> addDishToOrder()
+                4 -> finishOrder()
+                5 -> cancelOrder()
+                6 -> getStatus()
+                7 -> payForOrder()
+                8 -> return RestaurantFacade.getInstance().startWork()
+                9 -> return RestaurantFacade.getInstance().deleteAcc()
+                10 -> getOrders()
+                11 -> RestaurantFacade.getInstance().finish()
+                //leaveReview - только после оплаты
             }
         }
     }
+
     private fun startOrder() {
         val dishIds : ArrayList<Int> = arrayListOf()
         var dishId : Int
@@ -81,7 +74,7 @@ class VisitorFacade(private val validator : Validator = Validator()) {
             } else println("Ошибка при добавлении блюда!")
         } else println("Блюда с таким id не существует!")
     }
-    private suspend fun finishOrder() {
+    private fun finishOrder() {
         val mes = "Введите id вашего заказа:"
         val orderId = readInt(mes)
         if (!validator.validateOrderId(orderId)) return println("Заказа с таким id не существует!")

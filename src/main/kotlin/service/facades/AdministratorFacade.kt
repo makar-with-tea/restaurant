@@ -5,7 +5,7 @@ import org.example.*
 import service.Validator
 
 class AdministratorFacade(private val validator : Validator = Validator()) {
-    suspend fun adminMain() {
+    fun adminMain() {
         val adminMes = """ДОСТУПНЫЕ КОМАНДЫ
             |1 - посмотреть меню
             |2 - добавить блюдо в меню

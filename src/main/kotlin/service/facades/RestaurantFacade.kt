@@ -15,7 +15,7 @@ class RestaurantFacade private constructor() {
             return instance!!
         }
     }
-    suspend fun startWork() {
+    fun startWork() {
         val adminHandler = AdministratorFacade()
         val visitorHandler = VisitorFacade()
         val regMes = """Здравствуйте! Чтобы начать работу с приложением, зарегистрируйтесь или войдите в аккаунт.
@@ -81,7 +81,7 @@ class RestaurantFacade private constructor() {
         return RestaurantDaoImpl.getInstance().logInUser(login, password)
     }
 
-    suspend fun deleteAcc() {
+    fun deleteAcc() {
         val confirm = "Вы точно хотите удалить аккаунт? 1 - да, 2 - нет"
         var command: Int
         do command = readInt(confirm) while (command > 2 || command == 0)
