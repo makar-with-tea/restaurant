@@ -1,4 +1,4 @@
-package service.interfaces
+package service.facades
 
 import dao.RestaurantDaoImpl
 import org.example.*
@@ -22,16 +22,16 @@ class AdminFuncs(private val validator : Validator = Validator()) {
         while (true) {
             do command = readInt(adminMes) while (command > 10 || command < 1)
             when (command) {
-                1 -> printMenu()
+                1 -> RestaurantFacade.getInstance().printMenu()
                 2 -> addDish()
                 3 -> deleteDish()
                 4 -> setNumber()
                 5 -> setPrice()
                 6 -> setCookingTime()
                 7 -> getRevenue()
-                8 -> return startWork()
-                9 -> return deleteAcc()
-                10 -> return finish()
+                8 -> return RestaurantFacade.getInstance().startWork()
+                9 -> return RestaurantFacade.getInstance().deleteAcc()
+                10 -> return RestaurantFacade.getInstance().finish()
             }
         }
     }

@@ -1,4 +1,4 @@
-package service.interfaces
+package service.facades
 
 import dao.RestaurantDaoImpl
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ class VisitorFuncs(private val validator : Validator = Validator()) {
             do command = readInt(adminMes) while (command > 11 || command < 1)
             runBlocking {
                 when (command) {
-                    1 -> printMenu()
+                    1 -> RestaurantFacade.getInstance().printMenu()
                     2 -> startOrder()
                     3 -> addDishToOrder()
                     4 -> launch { finishOrder()}
@@ -35,15 +35,15 @@ class VisitorFuncs(private val validator : Validator = Validator()) {
                     6 -> getStatus()
                     7 -> payForOrder()
                     8 -> {
-                        startWork()
+                        RestaurantFacade.getInstance().startWork()
                         return@runBlocking
                     }
                     9 -> {
-                        deleteAcc()
+                        RestaurantFacade.getInstance().deleteAcc()
                         return@runBlocking
                     }
                     10 -> getOrders()
-                    11 -> finish()
+                    11 -> RestaurantFacade.getInstance().finish()
                     //leaveReview - только после оплаты
                 }
             }
